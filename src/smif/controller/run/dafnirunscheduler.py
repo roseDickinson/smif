@@ -18,7 +18,7 @@ import time
 import json
 import os
 import requests
-from flask import request
+from flask import request, make_response
 from collections import defaultdict
 from datetime import datetime
 from smif.data_layer import Store
@@ -61,10 +61,6 @@ class DAFNIRunScheduler(object):
         self._err = {}
         self.jobId = 0
         self.lock = False
-        token = request.cookies.get("jwt_token")
-        self.auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
-        response = requests.get(URL_JOBS, headers=self.auth_header)
-        response.raise_for_status()
         
     def add(self, model_run_name, args):
         """Add a model_run to the Modelrun scheduler.
@@ -90,6 +86,20 @@ class DAFNIRunScheduler(object):
         if self._status[model_run_name] is not 'running':
             self._output[model_run_name] = ''
             self._status[model_run_name] = 'queing'
+
+            make_response("Cookies")
+            resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
+            token2 = resp2.cookies["jwt_token"]
+            print("token2", token2)
+            token1 = request.cookies.get("jwt_token")
+            print("token1", token1)
+            if (token1):
+                token = token1
+            if (token2):
+                token = token2
+            auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
+            response = requests.get(URL_JOBS, headers=auth_header)
+            response.raise_for_status()
 
             smif_call = (
                 'smif run ' +
@@ -128,12 +138,12 @@ class DAFNIRunScheduler(object):
                 except ResponseError as err:
                     print(err)
 
-            response = requests.get(URL_JOBS, headers=self.auth_header)
+            response = requests.get(URL_JOBS, headers=auth_header)
             response.raise_for_status()
 
             for job in response.json():  
                 if job['job']['job_name'] == model_run_id:
-                    response = requests.delete(URL_JOBS + "/" + str(job['job']['id']), headers=self.auth_header)
+                    response = requests.delete(URL_JOBS + "/" + str(job['job']['id']), headers=auth_header)
                     response.raise_for_status()
 
             response = requests.post(
@@ -143,7 +153,7 @@ class DAFNIRunScheduler(object):
                     "model_name": model_run_name,
                     "minio_config_id": model_run_id 
                 },
-                headers=self.auth_header
+                headers=auth_header
             )
             response.raise_for_status()
 
@@ -194,6 +204,18 @@ class DAFNIRunScheduler(object):
         if self._status[model_run_name] == 'running':
             self._status[model_run_name] = 'stopped'
 
+        make_response("Cookies")
+        resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
+        token2 = resp2.cookies["jwt_token"]
+        print("token2", token2)
+        token1 = request.cookies.get("jwt_token")
+        print("token1", token1)
+        if (token1):
+            token = token1
+        if (token2):
+            token = token2
+        auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
+
         minio_credentials = self.get_dict_from_json(MINIO_CREDENTIALS_FILE)
         minio_client = Minio(
             MINIO_IP,
@@ -209,15 +231,27 @@ class DAFNIRunScheduler(object):
 
         minio_client.remove_bucket(model_run_id)
 
-        response = requests.get(URL_JOBS, headers=self.auth_header)
+        response = requests.get(URL_JOBS, headers=auth_header)
         response.raise_for_status()
 
         for job in response.json():  
             if job['job']['job_name'] == model_run_id:
-                requests.delete(URL_JOBS + "/" + str(job['job']['id']), headers=self.auth_header)
+                requests.delete(URL_JOBS + "/" + str(job['job']['id']), headers=auth_header)
 
     def get_status(self, model_run_name):
-        response = requests.get(URL_JOBS, headers=self.auth_header)
+        make_response("Cookies")
+        resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
+        token2 = resp2.cookies["jwt_token"]
+        print("token2", token2)
+        token1 = request.cookies.get("jwt_token")
+        print("token1", token1)
+        if (token1):
+            token = token1
+        if (token2):
+            token = token2
+        auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
+
+        response = requests.get(URL_JOBS, headers=auth_header)
         response.raise_for_status()
         model_run_id = model_run_name.replace("_", "-")
         if len(response.json()) > 0:
