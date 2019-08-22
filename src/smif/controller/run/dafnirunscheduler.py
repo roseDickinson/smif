@@ -89,15 +89,13 @@ class DAFNIRunScheduler(object):
 
             make_response("Cookies")
             resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-            token2 = resp2.cookies["jwt_token"]
-            print("token2", token2)
+            print("token2", resp2.cookies)
             token1 = request.cookies.get("jwt_token")
             print("token1", token1)
             if (token1):
                 token = token1
-            if (token2):
-                token = token2
             auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
+
             response = requests.get(URL_JOBS, headers=auth_header)
             response.raise_for_status()
 
@@ -206,14 +204,11 @@ class DAFNIRunScheduler(object):
 
         make_response("Cookies")
         resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-        token2 = resp2.cookies["jwt_token"]
-        print("token2", token2)
+        print("token2", resp2.cookies)
         token1 = request.cookies.get("jwt_token")
         print("token1", token1)
         if (token1):
             token = token1
-        if (token2):
-            token = token2
         auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
 
         minio_credentials = self.get_dict_from_json(MINIO_CREDENTIALS_FILE)
@@ -241,14 +236,11 @@ class DAFNIRunScheduler(object):
     def get_status(self, model_run_name):
         make_response("Cookies")
         resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-        token2 = resp2.cookies["jwt_token"]
-        print("token2", token2)
+        print("token2", resp2.cookies)
         token1 = request.cookies.get("jwt_token")
         print("token1", token1)
         if (token1):
             token = token1
-        if (token2):
-            token = token2
         auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
 
         response = requests.get(URL_JOBS, headers=auth_header)
