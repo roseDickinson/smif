@@ -88,12 +88,7 @@ class DAFNIRunScheduler(object):
             self._status[model_run_name] = 'queing'
 
             make_response("Cookies")
-            resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-            print("token2", resp2.cookies)
-            token1 = request.cookies.get("jwt_token")
-            print("token1", token1)
-            if (token1):
-                token = token1
+            token = request.cookies.get("jwt_token")
             auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
 
             response = requests.get(URL_JOBS, headers=auth_header)
@@ -203,12 +198,7 @@ class DAFNIRunScheduler(object):
             self._status[model_run_name] = 'stopped'
 
         make_response("Cookies")
-        resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-        print("token2", resp2.cookies)
-        token1 = request.cookies.get("jwt_token")
-        print("token1", token1)
-        if (token1):
-            token = token1
+        token = request.cookies.get("jwt_token")
         auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
 
         minio_credentials = self.get_dict_from_json(MINIO_CREDENTIALS_FILE)
@@ -235,12 +225,7 @@ class DAFNIRunScheduler(object):
 
     def get_status(self, model_run_name):
         make_response("Cookies")
-        resp2 = requests.get("https://pilots-nismod-wrapper-review-login-page-1jy332.staging.dafni.rl.ac.uk/")
-        print("token2", resp2.cookies)
-        token1 = request.cookies.get("jwt_token")
-        print("token1", token1)
-        if (token1):
-            token = token1
+        token = request.cookies.get("jwt_token")
         auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
 
         response = requests.get(URL_JOBS, headers=auth_header)
