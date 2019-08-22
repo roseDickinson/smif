@@ -340,7 +340,7 @@ def _run_server(args):
     if args.scheduler == 'default':
         model_scheduler = SubProcessRunScheduler()
     elif args.scheduler == 'dafni':
-        model_scheduler = DAFNIRunScheduler(args.username, args.password)
+        model_scheduler = DAFNIRunScheduler()
     else:
         raise ValueError("Scheduler implentation {} not recognised.".format(args.scheduler))
 
@@ -499,10 +499,6 @@ def parse_arguments():
                             default='default',
                             choices=['default', 'dafni'],
                             help="The module scheduling implementation to use")
-    parser_app.add_argument('-u', '--username',
-                            help="The username for logging in to the dafni JobSubmissionAPI, only needed with the dafni job scheduler")
-    parser_app.add_argument('-pw', '--password',
-                            help="The password for logging in to the dafni JobSubmissionAPI, only needed with the dafni job scheduler")
 
     # RUN
     parser_run = subparsers.add_parser(

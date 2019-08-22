@@ -18,6 +18,7 @@ import time
 import json
 import os
 import requests
+from flask import request
 from collections import defaultdict
 from datetime import datetime
 from smif.data_layer import Store
@@ -53,25 +54,14 @@ class DAFNIRunScheduler(object):
     and can provide information whether the modelrun is running,
     is done or has failed.
     """
-    def __init__(self, username, password):
+    def __init__(self):
         self._status = defaultdict(lambda: 'unstarted')
         self._process = {}
         self._output = defaultdict(str)
         self._err = {}
         self.jobId = 0
         self.lock = False
-        self.username = username
-        self.password = password
-        response = requests.post(
-            URL_AUTH,
-            json={
-                "username": self.username,
-                "password": self.password 
-            },
-            allow_redirects=False
-        )
-        response.raise_for_status()
-        token = response.json()['token']
+        token = request.cookies.get("jwt_token")
         self.auth_header = json.loads('{ "Authorization": "JWT ' + token + '"}')
         response = requests.get(URL_JOBS, headers=self.auth_header)
         response.raise_for_status()
